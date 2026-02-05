@@ -5,6 +5,8 @@ use bevy::{
     prelude::*,
 };
 
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 use crate::{
     AppSystems, PausableSystems,
     asset_tracking::LoadResource,
@@ -13,8 +15,6 @@ use crate::{
         movement::{MovementController, ScreenWrap},
     },
 };
-use crate::my_app::AppState::Gameplay;
-use crate::my_app::Game;
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<PlayerAssets>();
@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
         record_player_directional_input
             .in_set(AppSystems::RecordInput)
             .in_set(PausableSystems)
-            .run_if(in_state(Gameplay(Game::Demo)))
+            .run_if(in_state(Gameplay(Game::Demo))),
     );
 }
 

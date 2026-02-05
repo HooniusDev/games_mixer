@@ -41,7 +41,6 @@ pub(super) fn plugin(app: &mut App) {
         enter_title_screen
             .run_if(input_just_pressed(KeyCode::Escape).and(in_state(AppState::Splash))),
     );
-
 }
 
 const SPLASH_BACKGROUND_COLOR: Color = Color::srgb(0.157, 0.157, 0.157);

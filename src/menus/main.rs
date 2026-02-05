@@ -2,8 +2,8 @@
 
 use bevy::prelude::*;
 
+use crate::my_app::Game;
 use crate::{asset_tracking::ResourceHandles, menus::Menu, my_app::AppState, theme::widget};
-use crate::my_app::{Game};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Main), spawn_main_menu);
@@ -36,7 +36,6 @@ fn enter_loading_or_gameplay_demo(
     _: On<Pointer<Click>>,
     resource_handles: Res<ResourceHandles>,
     mut next_screen: ResMut<NextState<AppState>>,
-
 ) {
     if resource_handles.is_all_done() {
         next_screen.set(AppState::Gameplay(Game::Demo));

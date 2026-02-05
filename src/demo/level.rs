@@ -2,20 +2,19 @@
 
 use bevy::prelude::*;
 
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 use crate::{
     asset_tracking::LoadResource,
     audio::music,
     demo::player::{PlayerAssets, player},
     my_app::AppState,
 };
-use crate::my_app::AppState::Gameplay;
-use crate::my_app::Game;
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
 
     app.add_systems(OnEnter(Gameplay(Game::Demo)), spawn_level);
-
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]

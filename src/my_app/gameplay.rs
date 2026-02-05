@@ -1,11 +1,14 @@
 //! The screen state for the main gameplay.
 
-use bevy::{prelude::*};
+use bevy::prelude::*;
 
-use crate::{Pause, menus::Menu, my_app::{AppState, Game}};
+use crate::{
+    Pause,
+    menus::Menu,
+    my_app::{AppState, Game},
+};
 
 pub(super) fn plugin(app: &mut App) {
-
     //app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);
     //app.add_systems(OnEnter(Screen::Gameplay(Game::Flappy)), start_game);
 
@@ -17,13 +20,16 @@ pub(super) fn plugin(app: &mut App) {
             close_menu.run_if(should_close_menu),
         ),
     );
-    app.add_systems(OnExit(AppState::Gameplay(Game::Flappy)), (close_menu, unpause));
-    app.add_systems(OnExit(AppState::Gameplay(Game::Demo)), (close_menu, unpause));
-
     app.add_systems(
-        OnEnter(Menu::None),
-        unpause.run_if(is_in_gameplay),
+        OnExit(AppState::Gameplay(Game::Flappy)),
+        (close_menu, unpause),
     );
+    app.add_systems(
+        OnExit(AppState::Gameplay(Game::Demo)),
+        (close_menu, unpause),
+    );
+
+    app.add_systems(OnEnter(Menu::None), unpause.run_if(is_in_gameplay));
 }
 
 fn unpause(mut next_pause: ResMut<NextState<Pause>>) {
@@ -73,8 +79,10 @@ fn should_pause(
 }
 
 /// Predicate used to close menus with key press while in gameplay.
-fn should_close_menu(app_state: Res<State<AppState>>, menu: Res<State<Menu>>, keys: Res<ButtonInput<KeyCode>>,) -> bool {
-    app_state.is_gameplay()
-        && *menu.get() != Menu::None
-        && keys.just_pressed(KeyCode::KeyP)
+fn should_close_menu(
+    app_state: Res<State<AppState>>,
+    menu: Res<State<Menu>>,
+    keys: Res<ButtonInput<KeyCode>>,
+) -> bool {
+    app_state.is_gameplay() && *menu.get() != Menu::None && keys.just_pressed(KeyCode::KeyP)
 }

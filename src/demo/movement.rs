@@ -15,9 +15,9 @@
 
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::{AppSystems, PausableSystems};
 use crate::my_app::AppState::Gameplay;
 use crate::my_app::Game;
+use crate::{AppSystems, PausableSystems};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
@@ -26,7 +26,7 @@ pub(super) fn plugin(app: &mut App) {
             .chain()
             .in_set(AppSystems::Update)
             .in_set(PausableSystems)
-            .run_if(in_state(Gameplay(Game::Demo)))
+            .run_if(in_state(Gameplay(Game::Demo))),
     );
 }
 

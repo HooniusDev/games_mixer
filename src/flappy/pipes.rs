@@ -1,22 +1,23 @@
+use crate::PausableSystems;
+use crate::asset_tracking::LoadResource;
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 use bevy::prelude::*;
 use rand::Rng;
-use crate::asset_tracking::LoadResource;
-use crate::{PausableSystems};
-use crate::my_app::{Game};
-use crate::my_app::AppState::Gameplay;
 
 const MOVE_SPEED: f32 = 400.0;
 const RESPAWN_X: f32 = 700.0;
 const SPAWN_DELAY: f32 = 1.5;
 
 pub(super) fn plugin(app: &mut App) {
-
     app.load_resource::<PipeAssets>();
     app.init_resource::<PipeAssets>();
 
-    app.add_systems(Update, (movement, despawn, spawn)
-        .run_if(in_state(Gameplay(Game::Flappy)))
-        .in_set(PausableSystems)
+    app.add_systems(
+        Update,
+        (movement, despawn, spawn)
+            .run_if(in_state(Gameplay(Game::Flappy)))
+            .in_set(PausableSystems),
     );
 }
 
@@ -26,17 +27,14 @@ fn spawn(
     time: Res<Time>,
     mut timer: Local<Timer>,
 ) {
-
     if timer.duration().is_zero() {
         *timer = Timer::from_seconds(SPAWN_DELAY, TimerMode::Repeating);
-        return
+        return;
     }
 
     if timer.tick(time.delta()).just_finished() {
-
         let mut rng = rand::rng();
         let gap_y = rng.random_range(-200.0..200.0);
-
 
         commands.spawn((
             Name::new("Pipe"),
@@ -63,13 +61,9 @@ fn spawn(
         ));
     }
     //timer.tick(time.delta());
-
 }
 
-fn despawn(
-    mut commands: Commands,
-    query: Query<(Entity, &Transform), With<Pipe>>,
-) {
+fn despawn(mut commands: Commands, query: Query<(Entity, &Transform), With<Pipe>>) {
     for (entity, transform) in query {
         if transform.translation.x < -RESPAWN_X {
             commands.entity(entity).despawn();
@@ -77,10 +71,7 @@ fn despawn(
     }
 }
 
-fn movement(
-    mut query: Query<&mut Transform, With<Pipe>>,
-    time: Res<Time>,
-) {
+fn movement(mut query: Query<&mut Transform, With<Pipe>>, time: Res<Time>) {
     for mut transform in query.iter_mut() {
         transform.translation.x -= MOVE_SPEED * time.delta_secs();
     }
@@ -89,7 +80,6 @@ fn movement(
 #[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 pub struct Pipe;
-
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
@@ -105,5 +95,4 @@ impl FromWorld for PipeAssets {
             sprite: assets.load("flappy/pipe.png"),
         }
     }
-
 }

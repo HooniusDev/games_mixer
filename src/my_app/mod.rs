@@ -5,9 +5,9 @@ mod loading;
 mod splash;
 mod title;
 
-use bevy::prelude::*;
 use crate::demo::DemoGamePlugin;
 use crate::flappy::FlappyGamePlugin;
+use bevy::prelude::*;
 
 #[derive(Event)]
 pub struct StartGameEvent;
@@ -44,10 +44,7 @@ pub(super) fn plugin(app: &mut App) {
         title::plugin,
     ));
 
-    app.add_plugins((
-        FlappyGamePlugin,
-        DemoGamePlugin,
-    ));
+    app.add_plugins((FlappyGamePlugin, DemoGamePlugin));
 }
 
 /// The game's main screen states.

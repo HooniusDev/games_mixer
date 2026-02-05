@@ -3,8 +3,8 @@
 
 use bevy::prelude::*;
 
+use crate::my_app::StartGameEvent;
 use crate::{asset_tracking::ResourceHandles, my_app::AppState, theme::prelude::*};
-use crate::my_app::{StartGameEvent};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(AppState::Loading), spawn_loading_screen);
@@ -23,9 +23,7 @@ fn spawn_loading_screen(mut commands: Commands) {
     ));
 }
 
-fn enter_gameplay_screen(
-    mut commands: Commands,
-) {
+fn enter_gameplay_screen(mut commands: Commands) {
     commands.trigger(StartGameEvent)
 }
 

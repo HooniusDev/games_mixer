@@ -8,10 +8,10 @@ mod audio;
 mod demo;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod flappy;
 mod menus;
 mod my_app;
 mod theme;
-mod flappy;
 
 use bevy::{asset::AssetMetaCheck, prelude::*};
 

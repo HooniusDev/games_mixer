@@ -8,13 +8,13 @@ use bevy::prelude::*;
 use rand::prelude::*;
 use std::time::Duration;
 
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 use crate::{
     AppSystems, PausableSystems,
     audio::sound_effect,
     demo::{movement::MovementController, player::PlayerAssets},
 };
-use crate::my_app::AppState::Gameplay;
-use crate::my_app::Game;
 
 pub(super) fn plugin(app: &mut App) {
     // Animate and play sound effects based on controls.
@@ -29,10 +29,10 @@ pub(super) fn plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(AppSystems::Update)
-                .run_if(in_state(Gameplay(Game::Demo)))
+                .run_if(in_state(Gameplay(Game::Demo))),
         )
             .in_set(PausableSystems)
-            .run_if(in_state(Gameplay(Game::Demo)))
+            .run_if(in_state(Gameplay(Game::Demo))),
     );
 }
 

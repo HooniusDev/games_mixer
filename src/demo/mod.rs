@@ -20,6 +20,5 @@ impl Plugin for DemoGamePlugin {
             movement::plugin,
             player::plugin,
         ));
-
     }
 }
