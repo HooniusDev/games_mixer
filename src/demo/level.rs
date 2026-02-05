@@ -8,6 +8,7 @@ use crate::{
     demo::player::{PlayerAssets, player},
     screens::Screen,
 };
+use crate::screens::Game;
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
@@ -40,7 +41,7 @@ pub fn spawn_level(
         Name::new("Level"),
         Transform::default(),
         Visibility::default(),
-        DespawnOnExit(Screen::Gameplay),
+        DespawnOnExit(Screen::Gameplay(Game::Demo)),
         children![
             player(400.0, &player_assets, &mut texture_atlas_layouts),
             (

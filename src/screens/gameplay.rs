@@ -1,32 +1,26 @@
 //! The screen state for the main gameplay.
 
-use bevy::{input::common_conditions::input_just_pressed, prelude::*};
+use bevy::{prelude::*};
 
-use crate::{Pause, demo::level::spawn_level, menus::Menu, screens::Screen};
+use crate::{Pause, demo::level::spawn_level, menus::Menu, screens::{Screen, Game}, flappy::level::start_game};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Gameplay), spawn_level);
+    app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);
+    app.add_systems(OnEnter(Screen::Gameplay(Game::Flappy)), start_game);
 
     // Toggle pause on key press.
     app.add_systems(
         Update,
         (
-            (pause, spawn_pause_overlay, open_pause_menu).run_if(
-                in_state(Screen::Gameplay)
-                    .and(in_state(Menu::None))
-                    .and(input_just_pressed(KeyCode::KeyP).or(input_just_pressed(KeyCode::Escape))),
-            ),
-            close_menu.run_if(
-                in_state(Screen::Gameplay)
-                    .and(not(in_state(Menu::None)))
-                    .and(input_just_pressed(KeyCode::KeyP)),
-            ),
+            (pause, spawn_pause_overlay, open_pause_menu).run_if(should_pause),
+            close_menu.run_if(should_close_menu),
         ),
     );
-    app.add_systems(OnExit(Screen::Gameplay), (close_menu, unpause));
+    app.add_systems(OnExit(Screen::Gameplay(Game::Demo)), (close_menu, unpause));
+    app.add_systems(OnExit(Screen::Gameplay(Game::Flappy)), (close_menu, unpause));
     app.add_systems(
         OnEnter(Menu::None),
-        unpause.run_if(in_state(Screen::Gameplay)),
+        unpause.run_if(is_in_gameplay),
     );
 }
 
@@ -58,4 +52,27 @@ fn open_pause_menu(mut next_menu: ResMut<NextState<Menu>>) {
 
 fn close_menu(mut next_menu: ResMut<NextState<Menu>>) {
     next_menu.set(Menu::None);
+}
+
+/// Predicate: true when the current screen is any Gameplay variant.
+fn is_in_gameplay(screen: Res<State<Screen>>) -> bool {
+    matches!(screen.get(), Screen::Gameplay(_))
+}
+
+/// Predicate used for the pause toggle (checks screen, menu and keys).
+fn should_pause(
+    screen: Res<State<Screen>>,
+    menu: Res<State<Menu>>,
+    keys: Res<ButtonInput<KeyCode>>,
+) -> bool {
+    matches!(screen.get(), Screen::Gameplay(_))
+        && *menu.get() == Menu::None
+        && (keys.just_pressed(KeyCode::KeyP) || keys.just_pressed(KeyCode::Escape))
+}
+
+/// Predicate used to close menus with key press while in gameplay.
+fn should_close_menu(screen: Res<State<Screen>>, menu: Res<State<Menu>>, keys: Res<ButtonInput<KeyCode>>,) -> bool {
+    matches!(screen.get(), Screen::Gameplay(_))
+        && *menu.get() != Menu::None
+        && keys.just_pressed(KeyCode::KeyP)
 }
