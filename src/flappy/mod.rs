@@ -1,8 +1,9 @@
 //! Flappy bird game in Rust using bevy
 
-use bevy::prelude::*;
+//use bevy::prelude::*;
 
 
+/*
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         //crate::demo::animation::plugin,
@@ -11,4 +12,4 @@ pub(super) fn plugin(app: &mut App) {
         //player::plugin,
     ));
 }
-
+*/
