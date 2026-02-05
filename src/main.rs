@@ -9,7 +9,7 @@ mod demo;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod menus;
-mod screens;
+mod my_app;
 mod theme;
 mod flappy;
 
@@ -36,7 +36,7 @@ impl Plugin for AppPlugin {
                 .set(WindowPlugin {
                     primary_window: Window {
                         title: "Games Mixer".to_string(),
-                        fit_canvas_to_parent: true,
+                        //fit_canvas_to_parent: true,
                         ..default()
                     }
                     .into(),
@@ -48,12 +48,10 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_tracking::plugin,
             audio::plugin,
-            demo::plugin,
-            flappy::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,
             menus::plugin,
-            screens::plugin,
+            my_app::plugin,
             theme::plugin,
         ));
 
@@ -71,6 +69,7 @@ impl Plugin for AppPlugin {
         // Set up the `Pause` state.
         app.init_state::<Pause>();
         app.configure_sets(Update, PausableSystems.run_if(in_state(Pause(false))));
+        //app.configure_sets(Update, AppSystems::Update.run_if(in_state(AppState::Splash)));
 
         // Spawn the main camera.
         app.add_systems(Startup, spawn_camera);

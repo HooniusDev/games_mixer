@@ -6,12 +6,16 @@ use crate::{
     asset_tracking::LoadResource,
     audio::music,
     demo::player::{PlayerAssets, player},
-    screens::Screen,
+    my_app::AppState,
 };
-use crate::screens::Game;
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
+
+    app.add_systems(OnEnter(Gameplay(Game::Demo)), spawn_level);
+
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]
@@ -41,7 +45,7 @@ pub fn spawn_level(
         Name::new("Level"),
         Transform::default(),
         Visibility::default(),
-        DespawnOnExit(Screen::Gameplay(Game::Demo)),
+        DespawnOnExit(AppState::Gameplay(Game::Demo)),
         children![
             player(400.0, &player_assets, &mut texture_atlas_layouts),
             (

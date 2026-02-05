@@ -3,32 +3,30 @@
 
 use bevy::prelude::*;
 
-use crate::{asset_tracking::ResourceHandles, screens::Screen, theme::prelude::*};
-use crate::screens::Game;
+use crate::{asset_tracking::ResourceHandles, my_app::AppState, theme::prelude::*};
+use crate::my_app::{StartGameEvent};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Loading), spawn_loading_screen);
+    app.add_systems(OnEnter(AppState::Loading), spawn_loading_screen);
 
     app.add_systems(
         Update,
-        enter_gameplay_screen.run_if(in_state(Screen::Loading).and(all_assets_loaded)),
+        enter_gameplay_screen.run_if(in_state(AppState::Loading).and(all_assets_loaded)),
     );
 }
 
 fn spawn_loading_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Loading Screen"),
-        DespawnOnExit(Screen::Loading),
+        DespawnOnExit(AppState::Loading),
         children![widget::label("Loading...")],
     ));
 }
 
 fn enter_gameplay_screen(
-    mut next_screen: ResMut<NextState<Screen>>,
-    game: Res<Game>,
+    mut commands: Commands,
 ) {
-    println!("game should start now!");
-    next_screen.set(Screen::Gameplay(*game));
+    commands.trigger(StartGameEvent)
 }
 
 fn all_assets_loaded(resource_handles: Res<ResourceHandles>) -> bool {

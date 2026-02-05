@@ -1,26 +1,78 @@
 use bevy::prelude::*;
+use rand::Rng;
 use crate::asset_tracking::LoadResource;
-use crate::PausableSystems;
-use crate::screens::{Game, Screen};
+use crate::{PausableSystems};
+use crate::my_app::{Game};
+use crate::my_app::AppState::Gameplay;
 
 const MOVE_SPEED: f32 = 400.0;
 const RESPAWN_X: f32 = 700.0;
+const SPAWN_DELAY: f32 = 1.5;
 
 pub(super) fn plugin(app: &mut App) {
 
     app.load_resource::<PipeAssets>();
     app.init_resource::<PipeAssets>();
 
-    app.add_systems(Startup, setup_pipes);
-    app.add_systems(Update, (movement, respawn).in_set(PausableSystems));
+    app.add_systems(Update, (movement, despawn, spawn)
+        .run_if(in_state(Gameplay(Game::Flappy)))
+        .in_set(PausableSystems)
+    );
 }
 
-fn respawn(
-    mut query: Query<&mut Transform, With<Pipe>>,
+fn spawn(
+    mut commands: Commands,
+    pipe_assets: Res<PipeAssets>,
+    time: Res<Time>,
+    mut timer: Local<Timer>,
 ) {
-    for mut transform in query.iter_mut() {
+
+    if timer.duration().is_zero() {
+        *timer = Timer::from_seconds(SPAWN_DELAY, TimerMode::Repeating);
+        return
+    }
+
+    if timer.tick(time.delta()).just_finished() {
+
+        let mut rng = rand::rng();
+        let gap_y = rng.random_range(-200.0..200.0);
+
+
+        commands.spawn((
+            Name::new("Pipe"),
+            Sprite {
+                image: pipe_assets.sprite.clone(),
+                flip_y: true,
+                ..default()
+            },
+            Transform::from_xyz(RESPAWN_X, 400.0 - gap_y, 0.0),
+            DespawnOnExit(Gameplay(Game::Flappy)),
+            Pipe,
+        ));
+
+        //spawn lower pipe
+        commands.spawn((
+            Name::new("Pipe"),
+            Sprite {
+                image: pipe_assets.sprite.clone(),
+                ..default()
+            },
+            Transform::from_xyz(RESPAWN_X, -400.0 - gap_y, 0.0),
+            DespawnOnExit(Gameplay(Game::Flappy)),
+            Pipe,
+        ));
+    }
+    //timer.tick(time.delta());
+
+}
+
+fn despawn(
+    mut commands: Commands,
+    query: Query<(Entity, &Transform), With<Pipe>>,
+) {
+    for (entity, transform) in query {
         if transform.translation.x < -RESPAWN_X {
-            transform.translation.x = RESPAWN_X ;
+            commands.entity(entity).despawn();
         }
     }
 }
@@ -38,36 +90,6 @@ fn movement(
 #[reflect(Component)]
 pub struct Pipe;
 
-fn setup_pipes(
-    mut commands: Commands,
-    pipe_assets: Res<PipeAssets>,
-) {
-
-    // spawn upper pipe
-    commands.spawn((
-        Name::new("Pipe"),
-        Sprite {
-            image: pipe_assets.sprite.clone(),
-            flip_y: true,
-            ..default()
-        },
-        Transform::from_xyz(500.0, 400.0, 0.0),
-        DespawnOnExit(Screen::Gameplay(Game::Flappy)),
-        Pipe,
-    ));
-
-    //spawn lower pipe
-    commands.spawn((
-        Name::new("Pipe"),
-        Sprite {
-            image: pipe_assets.sprite.clone(),
-            ..default()
-        },
-        Transform::from_xyz(500.0, -400.0, 0.0),
-        DespawnOnExit(Screen::Gameplay(Game::Flappy)),
-        Pipe,
-    ));
-}
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]

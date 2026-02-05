@@ -2,8 +2,8 @@
 
 use bevy::prelude::*;
 
-use crate::{asset_tracking::ResourceHandles, menus::Menu, screens::Screen, theme::widget};
-use crate::screens::Game;
+use crate::{asset_tracking::ResourceHandles, menus::Menu, my_app::AppState, theme::widget};
+use crate::my_app::{Game};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Main), spawn_main_menu);
@@ -35,24 +35,25 @@ fn spawn_main_menu(mut commands: Commands) {
 fn enter_loading_or_gameplay_demo(
     _: On<Pointer<Click>>,
     resource_handles: Res<ResourceHandles>,
-    mut next_screen: ResMut<NextState<Screen>>,
+    mut next_screen: ResMut<NextState<AppState>>,
+
 ) {
     if resource_handles.is_all_done() {
-        next_screen.set(Screen::Gameplay(Game::Demo));
+        next_screen.set(AppState::Gameplay(Game::Demo));
     } else {
-        next_screen.set(Screen::Loading);
+        next_screen.set(AppState::Loading);
     }
 }
 
 fn enter_loading_or_gameplay_flappy(
     _: On<Pointer<Click>>,
     resource_handles: Res<ResourceHandles>,
-    mut next_screen: ResMut<NextState<Screen>>,
+    mut next_screen: ResMut<NextState<AppState>>,
 ) {
     if resource_handles.is_all_done() {
-        next_screen.set(Screen::Gameplay(Game::Flappy));
+        next_screen.set(AppState::Gameplay(Game::Flappy));
     } else {
-        next_screen.set(Screen::Loading);
+        next_screen.set(AppState::Loading);
     }
 }
 

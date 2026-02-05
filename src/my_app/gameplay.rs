@@ -2,11 +2,12 @@
 
 use bevy::{prelude::*};
 
-use crate::{Pause, demo::level::spawn_level, menus::Menu, screens::{Screen, Game}, flappy::level::start_game};
+use crate::{Pause, menus::Menu, my_app::{AppState, Game}};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);
-    app.add_systems(OnEnter(Screen::Gameplay(Game::Flappy)), start_game);
+
+    //app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);
+    //app.add_systems(OnEnter(Screen::Gameplay(Game::Flappy)), start_game);
 
     // Toggle pause on key press.
     app.add_systems(
@@ -16,8 +17,9 @@ pub(super) fn plugin(app: &mut App) {
             close_menu.run_if(should_close_menu),
         ),
     );
-    app.add_systems(OnExit(Screen::Gameplay(Game::Demo)), (close_menu, unpause));
-    app.add_systems(OnExit(Screen::Gameplay(Game::Flappy)), (close_menu, unpause));
+    app.add_systems(OnExit(AppState::Gameplay(Game::Flappy)), (close_menu, unpause));
+    app.add_systems(OnExit(AppState::Gameplay(Game::Demo)), (close_menu, unpause));
+
     app.add_systems(
         OnEnter(Menu::None),
         unpause.run_if(is_in_gameplay),
@@ -55,24 +57,24 @@ fn close_menu(mut next_menu: ResMut<NextState<Menu>>) {
 }
 
 /// Predicate: true when the current screen is any Gameplay variant.
-fn is_in_gameplay(screen: Res<State<Screen>>) -> bool {
-    matches!(screen.get(), Screen::Gameplay(_))
+fn is_in_gameplay(app_state: Res<State<AppState>>) -> bool {
+    app_state.is_gameplay()
 }
 
 /// Predicate used for the pause toggle (checks screen, menu and keys).
 fn should_pause(
-    screen: Res<State<Screen>>,
+    app_state: Res<State<AppState>>,
     menu: Res<State<Menu>>,
     keys: Res<ButtonInput<KeyCode>>,
 ) -> bool {
-    matches!(screen.get(), Screen::Gameplay(_))
+    app_state.is_gameplay()
         && *menu.get() == Menu::None
         && (keys.just_pressed(KeyCode::KeyP) || keys.just_pressed(KeyCode::Escape))
 }
 
 /// Predicate used to close menus with key press while in gameplay.
-fn should_close_menu(screen: Res<State<Screen>>, menu: Res<State<Menu>>, keys: Res<ButtonInput<KeyCode>>,) -> bool {
-    matches!(screen.get(), Screen::Gameplay(_))
+fn should_close_menu(app_state: Res<State<AppState>>, menu: Res<State<Menu>>, keys: Res<ButtonInput<KeyCode>>,) -> bool {
+    app_state.is_gameplay()
         && *menu.get() != Menu::None
         && keys.just_pressed(KeyCode::KeyP)
 }

@@ -21,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(States, Copy, Clone, Eq, PartialEq, Hash, Debug, Default)]
 pub enum Menu {
     #[default]
-    None,
+    None, // Probably in game
     Main,
     Credits,
     Settings,

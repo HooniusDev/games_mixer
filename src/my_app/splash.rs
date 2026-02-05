@@ -6,12 +6,12 @@ use bevy::{
     prelude::*,
 };
 
-use crate::{AppSystems, screens::Screen, theme::prelude::*};
+use crate::{AppSystems, my_app::AppState, theme::prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
     // Spawn splash screen.
     app.insert_resource(ClearColor(SPLASH_BACKGROUND_COLOR));
-    app.add_systems(OnEnter(Screen::Splash), spawn_splash_screen);
+    app.add_systems(OnEnter(AppState::Splash), spawn_splash_screen);
 
     // Animate splash screen.
     app.add_systems(
@@ -20,27 +20,28 @@ pub(super) fn plugin(app: &mut App) {
             tick_fade_in_out.in_set(AppSystems::TickTimers),
             apply_fade_in_out.in_set(AppSystems::Update),
         )
-            .run_if(in_state(Screen::Splash)),
+            .run_if(in_state(AppState::Splash)),
     );
 
     // Add splash timer.
-    app.add_systems(OnEnter(Screen::Splash), insert_splash_timer);
-    app.add_systems(OnExit(Screen::Splash), remove_splash_timer);
+    app.add_systems(OnEnter(AppState::Splash), insert_splash_timer);
+    app.add_systems(OnExit(AppState::Splash), remove_splash_timer);
     app.add_systems(
         Update,
         (
             tick_splash_timer.in_set(AppSystems::TickTimers),
             check_splash_timer.in_set(AppSystems::Update),
         )
-            .run_if(in_state(Screen::Splash)),
+            .run_if(in_state(AppState::Splash)),
     );
 
     // Exit the splash screen early if the player hits escape.
     app.add_systems(
         Update,
         enter_title_screen
-            .run_if(input_just_pressed(KeyCode::Escape).and(in_state(Screen::Splash))),
+            .run_if(input_just_pressed(KeyCode::Escape).and(in_state(AppState::Splash))),
     );
+
 }
 
 const SPLASH_BACKGROUND_COLOR: Color = Color::srgb(0.157, 0.157, 0.157);
@@ -51,7 +52,7 @@ fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         widget::ui_root("Splash Screen"),
         BackgroundColor(SPLASH_BACKGROUND_COLOR),
-        DespawnOnExit(Screen::Splash),
+        DespawnOnExit(AppState::Splash),
         children![(
             Name::new("Splash image"),
             Node {
@@ -134,12 +135,12 @@ fn tick_splash_timer(time: Res<Time>, mut timer: ResMut<SplashTimer>) {
     timer.0.tick(time.delta());
 }
 
-fn check_splash_timer(timer: ResMut<SplashTimer>, mut next_screen: ResMut<NextState<Screen>>) {
+fn check_splash_timer(timer: ResMut<SplashTimer>, mut next_screen: ResMut<NextState<AppState>>) {
     if timer.0.just_finished() {
-        next_screen.set(Screen::Title);
+        next_screen.set(AppState::Title);
     }
 }
 
-fn enter_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
-    next_screen.set(Screen::Title);
+fn enter_title_screen(mut next_screen: ResMut<NextState<AppState>>) {
+    next_screen.set(AppState::Title);
 }

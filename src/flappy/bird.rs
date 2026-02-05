@@ -1,12 +1,14 @@
 use bevy::prelude::*;
 use crate::{PausableSystems};
 use crate::asset_tracking::LoadResource;
-use crate::screens::{Game, Screen};
+use crate::my_app::{Game};
+use crate::my_app::AppState::Gameplay;
 
 pub struct SpawnBird;
 
 impl Command for SpawnBird {
     fn apply(self, world: &mut World) -> () {
+
         let assets = world.get_resource::<BirdAssets>();
 
         if let Some(assets) = assets {
@@ -19,17 +21,24 @@ impl Command for SpawnBird {
                 },
                 Bird,
                 Velocity::default(),
-                DespawnOnExit(Screen::Gameplay(Game::Flappy)),
+                DespawnOnExit(Gameplay(Game::Flappy)),
             ));
         }
     }
 }
 
+
+
+
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<BirdAssets>();
 
-    app.add_systems(Update, (get_input, movement, apply_gravity, rotate).in_set(PausableSystems));
+    app.add_systems(Update, (get_input, movement, apply_gravity, rotate)
+        .in_set(PausableSystems)
+        .run_if(in_state(Gameplay(Game::Flappy)))
+    );
 }
+
 
 fn rotate(
     mut query: Query<(&Velocity, &mut Transform), With<Bird>>,

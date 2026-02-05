@@ -13,6 +13,8 @@ use crate::{
     audio::sound_effect,
     demo::{movement::MovementController, player::PlayerAssets},
 };
+use crate::my_app::AppState::Gameplay;
+use crate::my_app::Game;
 
 pub(super) fn plugin(app: &mut App) {
     // Animate and play sound effects based on controls.
@@ -26,9 +28,11 @@ pub(super) fn plugin(app: &mut App) {
                 trigger_step_sound_effect,
             )
                 .chain()
-                .in_set(AppSystems::Update),
+                .in_set(AppSystems::Update)
+                .run_if(in_state(Gameplay(Game::Demo)))
         )
-            .in_set(PausableSystems),
+            .in_set(PausableSystems)
+            .run_if(in_state(Gameplay(Game::Demo)))
     );
 }
 

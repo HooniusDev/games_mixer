@@ -10,11 +10,16 @@ pub mod level;
 mod movement;
 pub mod player;
 
-pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((
-        animation::plugin,
-        level::plugin,
-        movement::plugin,
-        player::plugin,
-    ));
+pub struct DemoGamePlugin;
+
+impl Plugin for DemoGamePlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins((
+            animation::plugin,
+            level::plugin,
+            movement::plugin,
+            player::plugin,
+        ));
+
+    }
 }

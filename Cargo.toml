@@ -6,7 +6,8 @@ edition = "2024"
 
 [dependencies]
 bevy = { version = "0.18" }
-rand = "0.9"
+rand = "0.9.2"
+#getrandom = "0.3.3"
 
 # Compile out low-severity logs to improve performance.
 # Remove these features if you want to profile your game with tracy.
@@ -16,8 +17,8 @@ rand = "0.9"
 #    "release_max_level_warn",
 # ] }
 
-[target.wasm32-unknown-unknown.dependencies]
-getrandom = { version = "0.3", features = ["wasm_js"] }
+#[target.wasm32-unknown-unknown.dependencies]
+#getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [features]
 # Default to a native dev build.
