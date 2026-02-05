@@ -18,14 +18,8 @@ pub enum Game {
     Flappy,
 }
 
-#[derive(Resource, Debug, Deref, DerefMut)]
+#[derive(Resource, Debug, Deref, DerefMut, Default)]
 pub struct CurrentGame(pub Option<Game>);
-
-impl Default for CurrentGame {
-    fn default() -> Self {
-        CurrentGame(None)
-    }
-}
 
 impl AppState {
     pub fn is_gameplay(&self) -> bool {
