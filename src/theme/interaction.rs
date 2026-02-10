@@ -1,8 +1,10 @@
+use bevy::input_focus::InputFocus;
 use bevy::prelude::*;
 
 use crate::{asset_tracking::LoadResource, audio::sound_effect};
 
 pub(super) fn plugin(app: &mut App) {
+    app.init_resource::<InputFocus>();
     app.add_observer(apply_interaction_palette_on_click);
     app.add_observer(apply_interaction_palette_on_over);
     app.add_observer(apply_interaction_palette_on_out);
@@ -36,12 +38,12 @@ fn apply_interaction_palette_on_click(
 
 fn apply_interaction_palette_on_over(
     over: On<Pointer<Over>>,
+    mut input_focus: ResMut<InputFocus>,
     mut palette_query: Query<(&InteractionPalette, &mut BackgroundColor)>,
 ) {
     let Ok((palette, mut bg)) = palette_query.get_mut(over.event_target()) else {
         return;
     };
-
     *bg = palette.hovered.into();
 }
 

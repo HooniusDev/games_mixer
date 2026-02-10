@@ -7,6 +7,7 @@ use crate::{
     menus::Menu,
     my_app::{AppState, Game},
 };
+use crate::flappy::FlappyGamePlugin;
 
 pub(super) fn plugin(app: &mut App) {
     //app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);
@@ -31,6 +32,7 @@ pub(super) fn plugin(app: &mut App) {
 
     app.add_systems(OnEnter(Menu::None), unpause.run_if(is_in_gameplay));
 }
+
 
 fn unpause(mut next_pause: ResMut<NextState<Pause>>) {
     next_pause.set(Pause(false));

@@ -1,14 +1,15 @@
 //! Flappy bird game in Rust using bevy
 
+use bevy::app::{plugin_group, PluginGroupBuilder};
 use crate::PausableSystems;
 use crate::flappy::bird::SpawnBird;
 use crate::my_app::AppState::Gameplay;
 use crate::my_app::Game;
 use bevy::prelude::*;
 
-mod bird;
+pub(crate) mod bird;
 pub(crate) mod level;
-mod pipes;
+pub(crate) mod pipes;
 
 // add state for flappy game
 
@@ -23,12 +24,25 @@ struct Start;
 #[derive(Resource, Debug, Deref, DerefMut, Default)]
 pub(crate) struct GameRoot(pub(crate) Option<Entity>);
 
+#[derive(Debug,Default)]
+struct FlappyGamePlugins;
+
+impl PluginGroup for FlappyGamePlugins {
+    fn build(self) -> PluginGroupBuilder {
+        PluginGroupBuilder::start::<Self>()
+            .add(bird::BirdPlugin)
+            .add(level::plugin)
+            .add(pipes::plugin)
+    }
+}
+
+#[derive(Debug,Default)]
 pub struct FlappyGamePlugin;
 
 impl Plugin for FlappyGamePlugin {
     fn build(&self, app: &mut App) {
-        // add sub plugins
-        app.add_plugins((bird::plugin, level::plugin, pipes::plugin));
+        app.add_plugins(FlappyGamePlugins);
+
 
         app.insert_resource(GameRoot(None));
 
