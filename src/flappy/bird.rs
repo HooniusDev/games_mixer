@@ -56,7 +56,7 @@ fn on_death(
     mut commands: Commands,
     mut bird_query: Query<(Entity, &mut Velocity), With<Bird>>,
 ) {
-    let mut bird = bird_query.single_mut().expect("Error: Could not find a single bird.");;
+    let mut bird = bird_query.single_mut().expect("Error: Could not find a single bird.");
     bird.1.0 = -50.0;
     commands.entity(bird.0).insert(Dead);
 }

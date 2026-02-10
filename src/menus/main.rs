@@ -8,7 +8,7 @@ use bevy::picking::pointer::{Location, PointerId};
 use bevy::prelude::*;
 
 use crate::my_app::Game;
-use crate::{asset_tracking::ResourceHandles, main, menus::Menu, my_app::AppState, theme::widget};
+use crate::{asset_tracking::ResourceHandles, menus::Menu, my_app::AppState, theme::widget};
 use crate::theme::palette::BUTTON_BACKGROUND;
 
 pub(super) fn plugin(app: &mut App) {

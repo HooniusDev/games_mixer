@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use bevy::color::palettes::css::*;
-use bevy::ecs::system::entity_command::insert;
 use crate::my_app::AppState::Gameplay;
-use crate::my_app::{AppState, Game};
+use crate::my_app::{Game};
 
 pub fn plugin(app: &mut App) {
 
@@ -30,7 +29,7 @@ fn check_collisions(
     pipe_query: Query<&Transform, With<super::pipes::Pipe>>,
 ) {
     let bird = *bird_query;
-    for (i, pipe_transform) in pipe_query.iter().enumerate() {
+    for pipe_transform in pipe_query.iter() {
         gizmos.circle_2d(bird.translation.truncate() + Vec2::new(5., 3.), 32., RED);
         gizmos.rect_2d(pipe_transform.translation.truncate(), PIPE_SIZE, PINK );
         let collision = ball_collision(

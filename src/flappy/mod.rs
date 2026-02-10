@@ -1,6 +1,6 @@
 //! Flappy bird game in Rust using bevy
 
-use bevy::app::{plugin_group, PluginGroupBuilder};
+use bevy::app::{PluginGroupBuilder};
 use crate::PausableSystems;
 use crate::flappy::bird::SpawnBird;
 use crate::my_app::AppState::Gameplay;

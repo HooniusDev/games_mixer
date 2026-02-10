@@ -7,7 +7,6 @@ use crate::{
     menus::Menu,
     my_app::{AppState, Game},
 };
-use crate::flappy::FlappyGamePlugin;
 
 pub(super) fn plugin(app: &mut App) {
     //app.add_systems(OnEnter(Screen::Gameplay(Game::Demo)), spawn_level);

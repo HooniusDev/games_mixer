@@ -1,12 +1,10 @@
-use bevy::math::bounding::Aabb2d;
 use crate::PausableSystems;
 use crate::asset_tracking::LoadResource;
 use crate::my_app::AppState::Gameplay;
 use crate::my_app::Game;
 use bevy::prelude::*;
 use rand::Rng;
-use crate::flappy::bird;
-use crate::flappy::bird::{is_alive, BirdPlugin, Dead};
+use crate::flappy::bird::{is_alive};
 
 const MOVE_SPEED: f32 = 400.0;
 const RESPAWN_X: f32 = 700.0;
@@ -20,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (movement, despawn, spawn)
-            .run_if(bird::is_alive)
+            .run_if(is_alive)
             .in_set(PausableSystems),
     );
 }

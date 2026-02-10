@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
     // );
 }
 
-fn draw_flappy_hitboxes(
+fn _draw_flappy_hitboxes(
     mut gizmos: Gizmos,
     bird_query: Single<&Transform, With<crate::flappy::bird::Bird>>,
     pipe_query: Query<&Transform, With<crate::flappy::pipes::Pipe>>,

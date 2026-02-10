@@ -38,7 +38,7 @@ fn apply_interaction_palette_on_click(
 
 fn apply_interaction_palette_on_over(
     over: On<Pointer<Over>>,
-    mut input_focus: ResMut<InputFocus>,
+    mut _input_focus: ResMut<InputFocus>,
     mut palette_query: Query<(&InteractionPalette, &mut BackgroundColor)>,
 ) {
     let Ok((palette, mut bg)) = palette_query.get_mut(over.event_target()) else {
